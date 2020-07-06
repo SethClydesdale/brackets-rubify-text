@@ -1,0 +1,18 @@
+{
+    "name": "brackets-rubify-text",
+    "title": "Rubify Text",
+    "description": "Wraps selected texts with <ruby> annotation tags to help make annotating Asian texts with furigana easier.",
+    "homepage": "https://github.com/SethClydesdale/brackets-rubify-text",
+    "version": "1.0.0",
+    "author": "Seth Clydesdale (https://github.com/SethClydesdale)",
+    "license": "MIT",
+    "keywords" : [
+      "ruby",
+      "rt",
+      "html",
+      "furigana"
+    ],
+    "engines": {
+      "brackets": ">=1.11.0"
+    }
+}
