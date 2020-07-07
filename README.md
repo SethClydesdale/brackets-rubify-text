@@ -39,4 +39,4 @@ Returns two separate strings based on the two prior options separated by a bar `
 
 | Before Derubifying | After Derubifying |
 | :--------------- | :-------------- |
-| `<ruby>時々<rt>ときどき</rt></ruby>`| `時々|ときどき` |
+| `<ruby>時々<rt>ときどき</rt></ruby>`| `時々｜ときどき` |
