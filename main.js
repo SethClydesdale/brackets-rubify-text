@@ -4,37 +4,96 @@ define(function (require, exports, module) {
   
   // get modules
   var CommandManager = brackets.getModule('command/CommandManager'),
-               Menus = brackets.getModule('command/Menus'),
-             AppInit = brackets.getModule('utils/AppInit'),
-       EditorManager = brackets.getModule('editor/EditorManager'),
+      Menus = brackets.getModule('command/Menus'),
+      AppInit = brackets.getModule('utils/AppInit'),
+      EditorManager = brackets.getModule('editor/EditorManager'),
       
       // command text/id/shortcut
       cmdText = 'Rubify Text',
-        cmdId = 'rubifyText',
-       cmdKey = 'Ctrl-Alt-T';
+      cmdId = 'rubifyText',
+      cmdKey = 'Ctrl-Alt-T',
+       
+      // derubify commands
+      cmdDerubify = 'Derubify Text',
+      
+      toRuby = 'to <ruby> only text',
+      toRubyId = 'derubifyToRuby',
+      
+      toRt = 'to <rt> only text',
+      toRtId = 'derubifyToRt',
+      
+      toBoth = 'to two separate strings',
+      toBothId = 'derubifyToBoth';
   
   AppInit.appReady(function () {
-      // register command
-      CommandManager.register(cmdText, cmdId, function() {
-        var editor = EditorManager.getFocusedEditor();
+    // de/rubify functionality
+    function rubifyText (id) {
+      var editor = EditorManager.getFocusedEditor();
+      
+      if (editor) {
+        // loop over and modify selections
+        for (var selections = editor._codeMirror.getSelections(), i = 0, j = selections.length; i < j; i++) {
+          selections[i] =
+            id == cmdId ? // wrap selections with <ruby> tags with <rt> tags added on the end for annotations
+              '<ruby>' + selections[i] + '<rt></rt></ruby>' :
+            
+            // derubify commands below
+            id == toRubyId ? // ruby text only
+              selections[i].replace(/<ruby>([\s\S]*?)<rt>[\s\S]*?<\/rt>[\s\S]*?<\/ruby>/g, '$1') :
+            
+            id == toRtId ? // rt text only
+              selections[i].replace(/<ruby>[\s\S]*?<rt>([\s\S]*?)<\/rt>[\s\S]*?<\/ruby>/g, '$1') :
+            
+            id == toBothId ? // two separate strings
+              selections[i].replace(/<ruby>([\s\S]*?)<rt>[\s\S]*?<\/rt>[\s\S]*?<\/ruby>/g, '$1') + '|' + selections[i].replace(/<ruby>[\s\S]*?<rt>([\s\S]*?)<\/rt>[\s\S]*?<\/ruby>/g, '$1') :
+            
+            // default; no replacements
+            selections[i];
+        }
         
-        if (editor) {
-          // get selections
-          var selections = editor._codeMirror.getSelections(),
-              i = 0,
-              j = selections.length;
-          
-          // wrap selections with <ruby> tags with <rt> tags added on the end for annotations
-          for (; i < j; i++) {
-            selections[i] = '<ruby>' + selections[i] + '<rt></rt></ruby>';
+        // replace all the selections
+        editor._codeMirror.replaceSelections(selections);
+        
+        // set cursor position inside rt if rubifying text
+        if (id == cmdId) {
+          for (selections = editor._codeMirror.listSelections(), i = 0, j = selections.length; i < j; i++) {
+            selections[i].anchor.ch = selections[i].anchor.ch - 12;
+            selections[i].head.ch = selections[i].head.ch - 12;
           }
           
-          // replace all the selections
-          editor._codeMirror.replaceSelections(selections);
+          editor._codeMirror.setSelections(selections);
+          editor._codeMirror.refresh();
         }
-      });
+      }
+    };
     
-      // add menu item
-      Menus.getContextMenu(Menus.ContextMenuIds.EDITOR_MENU).addMenuItem(cmdId, cmdKey);
+    // Rubify Text Command
+    CommandManager.register(cmdText, cmdId, function() {
+      rubifyText(cmdId);
+    });
+    
+    // Derubify to <ruby> only text
+    CommandManager.register(toRuby, toRubyId, function () {
+      rubifyText(toRubyId);
+    });
+    
+    // Derubify to <rt> only text
+    CommandManager.register(toRt, toRtId, function () {
+      rubifyText(toRtId);
+    });
+    
+    // Derubify to two strings
+    CommandManager.register(toBoth, toBothId, function () {
+      rubifyText(toBothId);
+    });
+  
+    // add Rubify Text
+    Menus.getContextMenu(Menus.ContextMenuIds.EDITOR_MENU).addMenuItem(cmdId, cmdKey);
+    
+    // add Derubify Text
+    var subMenu = Menus.getContextMenu(Menus.ContextMenuIds.EDITOR_MENU).addSubMenu(cmdDerubify, 'derubifyText');
+    subMenu.addMenuItem(toRubyId);
+    subMenu.addMenuItem(toRtId);
+    subMenu.addMenuItem(toBothId);
   });
 });
