@@ -20,21 +20,21 @@ After rubifiying the text, all you need to do is fill in the `<rt>` annotations.
 ### Derubifying Text
 Select the text you want to convert from a `<ruby>` tag into plain text, then open the context menu and hover over "Derubify Text" to show a list of conversion options. Each option is listed below.
 
-#### to `<ruby>` only text
-Converts the string into the text that is only inside of the `<ruby>` tag.
+#### to `<ruby>` text
+Converts the string into the text that is only inside of the `<ruby>` tag. (does not include `<rt>` texts)
 
 | Before Derubifying | After Derubifying |
 | :--------------- | :-------------- |
 | `<ruby>時々<rt>ときどき</rt></ruby>`| `時々` |
 
-#### to `<rt>` only text
-Converts the string into the text that is only inside of the `<rt>` tag.
+#### to `<rt>` text
+Converts the string into the text that is only inside of the `<rt>` tag. (does not include `<ruby>` texts)
 
 | Before Derubifying | After Derubifying |
 | :--------------- | :-------------- |
 | `<ruby>時々<rt>ときどき</rt></ruby>`| `ときどき` |
 
-#### to two separate strings
+#### to two strings
 Returns two separate strings based on the two prior options separated by a bar `|`.
 
 | Before Derubifying | After Derubifying |

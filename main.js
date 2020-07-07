@@ -16,13 +16,13 @@ define(function (require, exports, module) {
       // derubify commands
       cmdDerubify = 'Derubify Text',
       
-      toRuby = 'to <ruby> only text',
+      toRuby = 'to <ruby> text',
       toRubyId = 'derubifyToRuby',
       
-      toRt = 'to <rt> only text',
+      toRt = 'to <rt> text',
       toRtId = 'derubifyToRt',
       
-      toBoth = 'to two separate strings',
+      toBoth = 'to two strings',
       toBothId = 'derubifyToBoth';
   
   AppInit.appReady(function () {
